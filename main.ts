@@ -2,6 +2,8 @@ namespace SpriteKind {
     export const coin = SpriteKind.create()
     export const potion = SpriteKind.create()
     export const button = SpriteKind.create()
+    export const NPC = SpriteKind.create()
+    export const complete = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile0`, function (sprite, location) {
     game.gameOver(false)
@@ -104,8 +106,26 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function (sprite, otherS
     Hunter.setPosition(Ron.x + 80, Ron.y - 80)
     Hunter.follow(Ron)
 })
-scene.onOverlapTile(SpriteKind.Player, assets.tile`myTile1`, function (sprite, location) {
-    game.gameOver(true)
+sprites.onOverlap(SpriteKind.Player, SpriteKind.NPC, function (sprite, otherSprite) {
+    game.showLongText("what is 10 x 9 ?", DialogLayout.Bottom)
+    story.showPlayerChoices("90", "19", "99", "10")
+    if (story.checkLastAnswer("90")) {
+        info.changeScoreBy(5)
+        game.gameOver(true)
+        NPC.setKind(SpriteKind.complete)
+    } else if (story.checkLastAnswer("19")) {
+        info.changeScoreBy(-5)
+        game.showLongText("wrong!", DialogLayout.Bottom)
+        game.gameOver(false)
+    } else if (story.checkLastAnswer("99")) {
+        info.changeScoreBy(-5)
+        game.showLongText("wrong!", DialogLayout.Bottom)
+        game.gameOver(false)
+    } else if (story.checkLastAnswer("10")) {
+        info.changeScoreBy(-5)
+        game.showLongText("wrong!", DialogLayout.Bottom)
+        game.gameOver(false)
+    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (Ron.vy == 0) {
@@ -280,20 +300,18 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function (sprite, otherSpr
     info.changeScoreBy(5)
     sprites.destroy(otherSprite)
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Player, function (sprite, otherSprite) {
-    info.changeLifeBy(-1)
-})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
-    if (true) {
-    	
+    if (Ron.y < otherSprite.y) {
+        info.changeScoreBy(3)
     } else {
-    	
+        info.changeLifeBy(-1)
     }
 })
 let cursor: Sprite = null
 let play: Sprite = null
 let Hunter: Sprite = null
+let NPC: Sprite = null
 let Potion: Sprite = null
 let coin: Sprite = null
 let Ron: Sprite = null
@@ -444,6 +462,7 @@ controller.moveSprite(Ron, 100, 0)
 tiles.setCurrentTilemap(tilemap`level1`)
 Ron.ay = 350
 scene.cameraFollowSprite(Ron)
+info.setLife(5)
 for (let value of tiles.getTilesByType(assets.tile`myTile2`)) {
     coin = sprites.create(img`
         . . . . f f f f f f f . . . . . 
@@ -696,6 +715,11 @@ for (let value of tiles.getTilesByType(assets.tile`myTile3`)) {
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.potion)
     tiles.placeOnTile(Potion, value)
+    tiles.setTileAt(value, assets.tile`transparency16`)
+}
+for (let value of tiles.getTilesByType(assets.tile`myTile4`)) {
+    NPC = sprites.create(assets.tile`myTile1`, SpriteKind.NPC)
+    tiles.placeOnTile(NPC, value)
     tiles.setTileAt(value, assets.tile`transparency16`)
 }
 game.onUpdate(function () {

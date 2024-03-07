@@ -2,7 +2,8 @@
     "name": "P5- Game design",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "arcade-story": "github:microsoft/arcade-storytelling#v1.0.3"
     },
     "files": [
         "main.blocks",
