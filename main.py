@@ -1,21 +1,24 @@
-namespace SpriteKind {
-    export const coin = SpriteKind.create()
-    export const potion = SpriteKind.create()
-    export const button = SpriteKind.create()
-    export const NPC = SpriteKind.create()
-    export const complete = SpriteKind.create()
-}
+@namespace
+class SpriteKind:
+    coin = SpriteKind.create()
+    potion = SpriteKind.create()
+    button = SpriteKind.create()
+    NPC = SpriteKind.create()
+    complete = SpriteKind.create()
 
-scene.onOverlapTile(SpriteKind.Player, assets.tile`
+def on_overlap_tile(sprite, location):
+    game.game_over(False)
+    game.set_game_over_effect(False, effects.slash)
+scene.on_overlap_tile(SpriteKind.player,
+    assets.tile("""
         myTile0
-    `, function on_overlap_tile(sprite: Sprite, location: tiles.Location) {
-    game.gameOver(false)
-    game.setGameOverEffect(false, effects.slash)
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function on_on_overlap(sprite2: Sprite, otherSprite: Sprite) {
-    
+    """),
+    on_overlap_tile)
+
+def on_on_overlap(sprite2, otherSprite):
+    global Hunter
     sprites.destroy(otherSprite)
-    Hunter = sprites.create(img`
+    Hunter = sprites.create(img("""
             . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
@@ -32,8 +35,10 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function on_on_overlap(s
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . .
-        `, SpriteKind.Enemy)
-    animation.runImageAnimation(Hunter, [img`
+        """),
+        SpriteKind.enemy)
+    animation.run_image_animation(Hunter,
+        [img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . 2 2 2 2 2 2 2 2 2 . . . 
@@ -50,7 +55,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function on_on_overlap(s
                         . . . . f . . . . . . . f . . . 
                         . . . f f . . . . . . f f . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . 2 2 2 2 2 2 2 2 2 . . . 
@@ -67,7 +73,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function on_on_overlap(s
                         . . . . f . . . . . . . f . . . 
                         . . . f f . . . . . . f f . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . 2 2 2 2 2 2 2 2 2 . . . 
@@ -84,7 +91,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function on_on_overlap(s
                         . . . . f . . . . . . . f . . . 
                         . . . f f . . . . . . f f . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . 2 2 2 2 2 2 2 2 2 . . . 
@@ -101,43 +109,44 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.potion, function on_on_overlap(s
                         . . . . f . . . . . . . f . . . 
                         . . . f f . . . . . . f f . . . 
                         . . . . . . . . . . . . . . . .
-            `], 200, true)
-    Hunter.setPosition(Ron.x + 80, Ron.y - 80)
+            """)],
+        200,
+        True)
+    Hunter.set_position(Ron.x + 80, Ron.y - 80)
     Hunter.follow(Ron)
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.NPC, function on_on_overlap2(sprite3: Sprite, otherSprite2: Sprite) {
-    game.showLongText("what is 10 x 9 ?", DialogLayout.Bottom)
-    story.showPlayerChoices("90", "19", "99", "10")
-    if (story.checkLastAnswer("90")) {
-        info.changeScoreBy(5)
-        game.gameOver(true)
-        NPC2.setKind(SpriteKind.complete)
-    } else if (story.checkLastAnswer("19")) {
-        info.changeScoreBy(-5)
-        game.showLongText("wrong!", DialogLayout.Bottom)
-        game.gameOver(false)
-    } else if (story.checkLastAnswer("99")) {
-        info.changeScoreBy(-5)
-        game.showLongText("wrong!", DialogLayout.Bottom)
-        game.gameOver(false)
-    } else if (story.checkLastAnswer("10")) {
-        info.changeScoreBy(-5)
-        game.showLongText("wrong!", DialogLayout.Bottom)
-        game.gameOver(false)
-    }
-    
-})
-controller.A.onEvent(ControllerButtonEvent.Pressed, function on_a_pressed() {
-    if (Ron.vy == 0) {
+sprites.on_overlap(SpriteKind.player, SpriteKind.potion, on_on_overlap)
+
+def on_on_overlap2(sprite3, otherSprite2):
+    game.show_long_text("what is 10 x 9 ?", DialogLayout.BOTTOM)
+    story.show_player_choices("90", "19", "99", "10")
+    if story.check_last_answer("90"):
+        info.change_score_by(5)
+        game.game_over(True)
+        NPC2.set_kind(SpriteKind.complete)
+    elif story.check_last_answer("19"):
+        info.change_score_by(-5)
+        game.show_long_text("wrong!", DialogLayout.BOTTOM)
+        game.game_over(False)
+    elif story.check_last_answer("99"):
+        info.change_score_by(-5)
+        game.show_long_text("wrong!", DialogLayout.BOTTOM)
+        game.game_over(False)
+    elif story.check_last_answer("10"):
+        info.change_score_by(-5)
+        game.show_long_text("wrong!", DialogLayout.BOTTOM)
+        game.game_over(False)
+sprites.on_overlap(SpriteKind.player, SpriteKind.NPC, on_on_overlap2)
+
+def on_a_pressed():
+    if Ron.vy == 0:
         Ron.vy = -150
-    }
-    
-})
-function main_menu() {
-    
-    if (level == 0) {
+controller.A.on_event(ControllerButtonEvent.PRESSED, on_a_pressed)
+
+def main_menu():
+    global play, cursor
+    if level == 0:
         main_menu()
-        scene.setBackgroundImage(img`
+        scene.set_background_image(img("""
             ccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccccccc
                         ccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccccccc
                         ccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -258,8 +267,8 @@ function main_menu() {
                         cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
                         cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
                         cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        `)
-        play = sprites.create(img`
+        """))
+        play = sprites.create(img("""
                 . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
@@ -276,8 +285,9 @@ function main_menu() {
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . .
-            `, SpriteKind.button)
-        cursor = sprites.create(img`
+            """),
+            SpriteKind.button)
+        cursor = sprites.create(img("""
                 . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
                             . . . . . . 1 . . . . . . . . . 
@@ -294,35 +304,33 @@ function main_menu() {
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . . 
                             . . . . . . . . . . . . . . . .
-            `, SpriteKind.Player)
-        play.setPosition(18, 113)
-    }
-    
-}
+            """),
+            SpriteKind.player)
+        play.set_position(18, 113)
 
-sprites.onOverlap(SpriteKind.Player, SpriteKind.coin, function on_on_overlap3(sprite4: Sprite, otherSprite3: Sprite) {
-    info.changeScoreBy(5)
+def on_on_overlap3(sprite4, otherSprite3):
+    info.change_score_by(5)
     sprites.destroy(otherSprite3)
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function on_on_overlap4(sprite5: Sprite, otherSprite4: Sprite) {
+sprites.on_overlap(SpriteKind.player, SpriteKind.coin, on_on_overlap3)
+
+def on_on_overlap4(sprite5, otherSprite4):
     sprites.destroy(otherSprite4)
-    if (Ron.y < otherSprite4.y) {
-        info.changeScoreBy(3)
-    } else {
-        info.changeLifeBy(-1)
-    }
-    
-})
-let cursor : Sprite = null
-let play : Sprite = null
-let Hunter : Sprite = null
-let NPC2 : Sprite = null
-let Potion : Sprite = null
-let coin2 : Sprite = null
-let Ron : Sprite = null
-let level = 0
-scene.setBackgroundColor(10)
-scene.setBackgroundImage(img`
+    if Ron.y < otherSprite4.y:
+        info.change_score_by(3)
+    else:
+        info.change_life_by(-1)
+sprites.on_overlap(SpriteKind.player, SpriteKind.enemy, on_on_overlap4)
+
+cursor: Sprite = None
+play: Sprite = None
+Hunter: Sprite = None
+NPC2: Sprite = None
+Potion: Sprite = None
+coin2: Sprite = None
+Ron: Sprite = None
+level = 0
+scene.set_background_color(10)
+scene.set_background_image(img("""
     dddddddddddddddddddddccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         ddddddddddddddddddddcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         dddddddddddddddddddccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -443,9 +451,9 @@ scene.setBackgroundImage(img`
         bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
         bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
         bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-`)
+"""))
 level = 1
-Ron = sprites.create(img`
+Ron = sprites.create(img("""
         . . . . . . . . . . . . . . . . 
             . . e e e e e e e e e . . . . . 
             . . e e e e e e e e e . . . . . 
@@ -462,18 +470,19 @@ Ron = sprites.create(img`
             . . 6 8 8 8 8 8 8 8 8 . . . . . 
             . . 4 4 4 . . . 4 4 4 . . . . . 
             . . 4 4 4 . . . 4 4 4 . . . . .
-    `, SpriteKind.Player)
-controller.moveSprite(Ron, 100, 0)
-tiles.setCurrentTilemap(tilemap`
+    """),
+    SpriteKind.player)
+controller.move_sprite(Ron, 100, 0)
+tiles.set_current_tilemap(tilemap("""
     level1
-`)
+"""))
 Ron.ay = 350
-scene.cameraFollowSprite(Ron)
-info.setLife(5)
-for (let value of tiles.getTilesByType(assets.tile`
+scene.camera_follow_sprite(Ron)
+info.set_life(5)
+for value in tiles.get_tiles_by_type(assets.tile("""
     myTile2
-`)) {
-    coin2 = sprites.create(img`
+""")):
+    coin2 = sprites.create(img("""
             . . . . f f f f f f f . . . . . 
                     . . f f 5 5 5 5 5 5 5 f f . . . 
                     . f 5 5 4 4 4 4 4 4 5 5 5 f . . 
@@ -490,8 +499,10 @@ for (let value of tiles.getTilesByType(assets.tile`
                     . . f f 5 5 5 5 5 5 5 f f . . . 
                     . . . . f f f f f f f . . . . . 
                     . . . . . . . . . . . . . . . .
-        `, SpriteKind.coin)
-    animation.runImageAnimation(coin2, [img`
+        """),
+        SpriteKind.coin)
+    animation.run_image_animation(coin2,
+        [img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . f f f f f f f . . . . 
@@ -508,7 +519,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . f 5 5 5 5 5 5 5 f . . . 
                         . . . . . f f f f f f f . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . f f f f . . . . . 
@@ -525,7 +537,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . f 5 5 5 5 f . . . . 
                         . . . . . . . f f f f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . f f f . . . . . 
@@ -542,7 +555,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . f 5 5 f . . . . . 
                         . . . . . . . . f f f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . . f f . . . . . 
@@ -559,7 +573,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . . f 5 5 . . . . . 
                         . . . . . . . . . f f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . f . . . . . 
@@ -576,7 +591,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . . . f 5 . . . . . 
                         . . . . . . . . . . f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . f . . . . . 
@@ -593,7 +609,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . . . f 5 . . . . . 
                         . . . . . . . . . . f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . f . . . . . 
@@ -610,7 +627,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . . . f 5 . . . . . 
                         . . . . . . . . . . f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . f . . . . . 
@@ -627,7 +645,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . . . f 5 . . . . . 
                         . . . . . . . . . . f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . . f f . . . . . 
@@ -644,7 +663,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . . f 5 5 . . . . . 
                         . . . . . . . . . f f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . . f f f . . . . . 
@@ -661,7 +681,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . . f 5 5 f . . . . . 
                         . . . . . . . . f f f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . . . f f f f . . . . . 
@@ -678,7 +699,8 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . . . f 5 5 5 5 f . . . . 
                         . . . . . . . f f f f . . . . . 
                         . . . . . . . . . . . . . . . .
-            `, img`
+            """),
+            img("""
                 . . . . . . . . . . . . . . . . 
                         . . . . . . . . . . . . . . . . 
                         . . . . . f f f f f f f . . . . 
@@ -695,16 +717,17 @@ for (let value of tiles.getTilesByType(assets.tile`
                         . . . . f 5 5 5 5 5 5 5 f . . . 
                         . . . . . f f f f f f f . . . . 
                         . . . . . . . . . . . . . . . .
-            `], 100, true)
-    tiles.placeOnTile(coin2, value)
-    tiles.setTileAt(value, assets.tile`
+            """)],
+        100,
+        True)
+    tiles.place_on_tile(coin2, value)
+    tiles.set_tile_at(value, assets.tile("""
         transparency16
-    `)
-}
-for (let value2 of tiles.getTilesByType(assets.tile`
+    """))
+for value2 in tiles.get_tiles_by_type(assets.tile("""
     myTile3
-`)) {
-    Potion = sprites.create(img`
+""")):
+    Potion = sprites.create(img("""
             . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . f f f f . . . . . . . 
@@ -721,25 +744,25 @@ for (let value2 of tiles.getTilesByType(assets.tile`
                     . . . . f f f f f f . . . . . . 
                     . . . . . . . . . . . . . . . . 
                     . . . . . . . . . . . . . . . .
-        `, SpriteKind.potion)
-    tiles.placeOnTile(Potion, value2)
-    tiles.setTileAt(value2, assets.tile`
+        """),
+        SpriteKind.potion)
+    tiles.place_on_tile(Potion, value2)
+    tiles.set_tile_at(value2, assets.tile("""
         transparency16
-    `)
-}
-for (let value3 of tiles.getTilesByType(assets.tile`
+    """))
+for value3 in tiles.get_tiles_by_type(assets.tile("""
     myTile4
-`)) {
-    NPC2 = sprites.create(assets.tile`
+""")):
+    NPC2 = sprites.create(assets.tile("""
         myTile1
-    `, SpriteKind.NPC)
-    tiles.placeOnTile(NPC2, value3)
-    tiles.setTileAt(value3, assets.tile`
+    """), SpriteKind.NPC)
+    tiles.place_on_tile(NPC2, value3)
+    tiles.set_tile_at(value3, assets.tile("""
         transparency16
-    `)
-}
-game.onUpdate(function on_on_update() {
-    Ron.setImage(img`
+    """))
+
+def on_on_update():
+    Ron.set_image(img("""
         . . . . . . . . . . . . . . . . 
                 . . e e e e e e e e e . . . . . 
                 . . e e e e e e e e e . . . . . 
@@ -756,9 +779,9 @@ game.onUpdate(function on_on_update() {
                 . . 6 8 8 8 8 8 8 8 8 . . . . . 
                 . . 4 4 4 . . . 4 4 4 . . . . . 
                 . . 4 4 4 . . . 4 4 4 . . . . .
-    `)
-    if (Ron.vy < 0) {
-        Ron.setImage(img`
+    """))
+    if Ron.vy < 0:
+        Ron.set_image(img("""
             . . . . . . . . . . . . . . . . 
                         . . . . . . e e e e e e e e e . 
                         . . . . . d e e e e e e e e e d 
@@ -775,9 +798,9 @@ game.onUpdate(function on_on_update() {
                         . . . . . . 6 8 8 8 8 8 8 8 8 . 
                         . . . . . . 4 4 4 . . . 4 4 4 . 
                         . . . . . . 4 4 4 . . . 4 4 4 .
-        `)
-    } else if (Ron.vy > 0) {
-        Ron.setImage(img`
+        """))
+    elif Ron.vy > 0:
+        Ron.set_image(img("""
             . . . . . . . . . . . . . . . . 
                         . . . . . . e e e e e e e e e . 
                         . . . . . . e e e e e e e e e . 
@@ -794,13 +817,9 @@ game.onUpdate(function on_on_update() {
                         . . . . . . 6 8 8 8 8 8 8 8 8 . 
                         . . . . . . 4 4 4 . . . 4 4 4 . 
                         . . . . . . 4 4 4 . . . 4 4 4 .
-        `)
-    } else if (Ron.x % 2 == 0) {
-        
-    }
-    
-    if (Ron.vx < 0) {
-        Ron.image.flipX()
-    }
-    
-})
+        """))
+    elif Ron.x % 2 == 0:
+        pass
+    if Ron.vx < 0:
+        Ron.image.flip_x()
+game.on_update(on_on_update)
